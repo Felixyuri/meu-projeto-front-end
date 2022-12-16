@@ -98,7 +98,7 @@ const Table = () => {
                 labels: [...currentDays],
                 datasets: [
                     {
-                        label: 'Chamadas totais',
+                        label: 'Chamadas totais por dia',
                         data: [...currentContent],
                         backgroundColor: ['#ff8d005e', '#63d77761', '#ff000059', '#2d1b3e9f', '#ff000059', '#2d1b3e9f', '#63d77761', '#2d1b3e9f'],
                         borderColor: ['#ff6e07fa', '#057628', '#951717', '#2d1b3e', '#951717', '#2d1b3e', '#057628', '#2d1b3e'],
