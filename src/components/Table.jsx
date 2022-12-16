@@ -6,7 +6,8 @@ import { useEffect, useState } from 'react';
 import Moment from 'moment';
 import { home } from '../Api';
 import axios from 'axios';
-import Chart from 'chart.js/auto';
+import 'chart.js/auto';
+import { trackPromise } from 'react-promise-tracker';
 import { Line, Pie, Bar } from 'react-chartjs-2';
 
 const Table = () => {
@@ -72,55 +73,57 @@ const Table = () => {
     };
 
     const retornoClass = async () => {
-        const infoClass = await axios.get('http://localhost/content/class.php');
-        const infosclass = infoClass.data;
-        setDataPie({
-            labels: ['Falha operadora', 'Telefone incorreto', 'Não atendida', 'Atendimento maquina', 'Atendimento humano', 'Abandono pre fila', 'Abandono fila', 'Atendimento pa'],
-            datasets: [
-                {
-                    data: [infosclass['chamadas_falha_operadora'], infosclass['chamadas_telefone_incorreto'], infosclass['chamadas_nao_atendida'], infosclass['chamadas_atendimento_maquina'], infosclass['chamadas_atendimento_humano'], infosclass['chamadas_abandono_pre_fila'], infosclass['chamadas_abandono_fila'], infosclass['chamadas_atendimento_pa']],
-                    backgroundColor: ['#ff8d005e', '#cb7e7e', '#ff000059', '#9d8fb0', '#b2cc7d', '#2d1b3e9f', '#63d77761', '#591de5'],
-                    borderColor: ['#ff8d005e', '#cb7e7e', '#ff000059', '#9d8fb0', '#b2cc7d', '#2d1b3e9f', '#63d77761', '#591de5'],
-                    borderWidth: 1
-                }
-            ]
-        });
+        trackPromise(retornoapi().then(async () => {
+            const infoClass = await axios.get('http://localhost/content/class.php');
+            const infosclass = infoClass.data;
 
-        const infoDay = await axios.get('http://localhost/content/days.php');
-        const infosDay = infoDay.data;
-        let currentDays = infosDay.map((infoDay) => Moment(infoDay.data).format('DD/MM/yyyy'));
-        let currentContent = infosDay.map((infoDay) => infoDay.chamadas_total);
+            setDataPie({
+                labels: ['Falha operadora', 'Telefone incorreto', 'Não atendida', 'Atendimento maquina', 'Atendimento humano', 'Abandono pre fila', 'Abandono fila', 'Atendimento pa'],
+                datasets: [
+                    {
+                        data: [infosclass['chamadas_falha_operadora'], infosclass['chamadas_telefone_incorreto'], infosclass['chamadas_nao_atendida'], infosclass['chamadas_atendimento_maquina'], infosclass['chamadas_atendimento_humano'], infosclass['chamadas_abandono_pre_fila'], infosclass['chamadas_abandono_fila'], infosclass['chamadas_atendimento_pa']],
+                        backgroundColor: ['#ff8d005e', '#cb7e7e', '#ff000059', '#9d8fb0', '#b2cc7d', '#2d1b3e9f', '#63d77761', '#591de5'],
+                        borderColor: ['#ff8d005e', '#cb7e7e', '#ff000059', '#9d8fb0', '#b2cc7d', '#2d1b3e9f', '#63d77761', '#591de5'],
+                        borderWidth: 1
+                    }
+                ]
+            });
 
-        setDataLine({
-            labels: [...currentDays],
-            datasets: [
-                {
-                    data: [...currentContent],
-                    backgroundColor: ['#ff8d005e', '#63d77761', '#ff000059', '#2d1b3e9f', '#ff000059', '#2d1b3e9f', '#63d77761', '#2d1b3e9f'],
-                    borderColor: ['#ff6e07fa', '#057628', '#951717', '#2d1b3e', '#951717', '#2d1b3e', '#057628', '#2d1b3e'],
-                    borderWidth: 1
-                }
-            ]
-        });
+            const infoDay = await axios.get('http://localhost/content/days.php');
+            const infosDay = infoDay.data;
+            let currentDays = infosDay.map((infoDay) => Moment(infoDay.data).format('DD/MM/yyyy'));
+            let currentContent = infosDay.map((infoDay) => infoDay.chamadas_total);
 
-        const infoOccu = await axios.get('http://localhost/content/occu.php');
-        const infosOccu = infoOccu.data;
+            setDataLine({
+                labels: [...currentDays],
+                datasets: [
+                    {
+                        data: [...currentContent],
+                        backgroundColor: ['#ff8d005e', '#63d77761', '#ff000059', '#2d1b3e9f', '#ff000059', '#2d1b3e9f', '#63d77761', '#2d1b3e9f'],
+                        borderColor: ['#ff6e07fa', '#057628', '#951717', '#2d1b3e', '#951717', '#2d1b3e', '#057628', '#2d1b3e'],
+                        borderWidth: 1
+                    }
+                ]
+            });
 
-        setDataBar({
-            labels: ['Sem contato', 'Com contato', 'Abordagem', 'Fechamento'],
-            datasets: [
-                {
-                    data: [infosOccu['ocorrencias_sem_contato'], infosOccu['ocorrencias_com_contato'], infosOccu['ocorrencias_abordagem'], infosOccu['ocorrencias_fechamento']],
-                    backgroundColor: ['#ff8d005e', '#63d77761', '#ff000059', '#2d1b3e9f', '#ff000059', '#2d1b3e9f', '#63d77761', '#2d1b3e9f'],
-                    borderColor: ['#ff6e07fa', '#057628', '#951717', '#2d1b3e', '#951717', '#2d1b3e', '#057628', '#2d1b3e'],
-                    borderWidth: 1
-                }
-            ]
-        });
+            const infoOccu = await axios.get('http://localhost/content/occu.php');
+            const infosOccu = infoOccu.data;
+
+            setDataBar({
+                labels: ['Sem contato', 'Com contato', 'Abordagem', 'Fechamento'],
+                datasets: [
+                    {
+                        data: [infosOccu['ocorrencias_sem_contato'], infosOccu['ocorrencias_com_contato'], infosOccu['ocorrencias_abordagem'], infosOccu['ocorrencias_fechamento']],
+                        backgroundColor: ['#ff8d005e', '#63d77761', '#ff000059', '#2d1b3e9f', '#ff000059', '#2d1b3e9f', '#63d77761', '#2d1b3e9f'],
+                        borderColor: ['#ff6e07fa', '#057628', '#951717', '#2d1b3e', '#951717', '#2d1b3e', '#057628', '#2d1b3e'],
+                        borderWidth: 1
+                    }
+                ]
+            });
+        }).catch((erro) => { alert(erro) }));
     }
 
     useEffect(() => {
-        retornoapi();
         retornoClass();
     }, []);
 
@@ -149,7 +152,7 @@ const Table = () => {
         let array = {
             'data': event.target.value
         }
-        const response = await axios.post('http://localhost/content/buscar.php', JSON.stringify(array))
+        const response = await trackPromise(axios.post('http://localhost/content/buscar.php', JSON.stringify(array)))
 
         try {
             if (response.data) {

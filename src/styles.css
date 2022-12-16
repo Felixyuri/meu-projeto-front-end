@@ -43,3 +43,21 @@ body {
     border-radius: 5px;
     overflow: hidden;
 }
+
+th:hover {
+    cursor: pointer;
+    background-color: #00000042 !important;
+}
+
+.back-drop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: #7b7b7ba2;
+    z-index: 1;
+}
