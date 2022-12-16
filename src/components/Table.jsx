@@ -64,7 +64,7 @@ const Table = () => {
         let infosData = responseInfos.data;
         let dataSearch = Moment(infosData[0].geral.data).format('yyyy-MM-DD');
 
-        const returnInfos = await axios.post('http://localhost/TESTE/content/home.php', JSON.stringify(infosData));
+        const returnInfos = await axios.post('http://localhost/content/home.php', JSON.stringify(infosData));
 
         setDataBusca(dataSearch);
         setDataCliente(returnInfos.data.clientes);
@@ -72,7 +72,7 @@ const Table = () => {
     };
 
     const retornoClass = async () => {
-        const infoClass = await axios.get('http://localhost/TESTE/content/class.php');
+        const infoClass = await axios.get('http://localhost/content/class.php');
         const infosclass = infoClass.data;
         setDataPie({
             labels: ['Falha operadora', 'Telefone incorreto', 'Não atendida', 'Atendimento maquina', 'Atendimento humano', 'Abandono pre fila', 'Abandono fila', 'Atendimento pa'],
@@ -86,7 +86,7 @@ const Table = () => {
             ]
         });
 
-        const infoDay = await axios.get('http://localhost/TESTE/content/days.php');
+        const infoDay = await axios.get('http://localhost/content/days.php');
         const infosDay = infoDay.data;
         let currentDays = infosDay.map((infoDay) => Moment(infoDay.data).format('DD/MM/yyyy'));
         let currentContent = infosDay.map((infoDay) => infoDay.chamadas_total);
@@ -103,7 +103,7 @@ const Table = () => {
             ]
         });
 
-        const infoOccu = await axios.get('http://localhost/TESTE/content/occu.php');
+        const infoOccu = await axios.get('http://localhost/content/occu.php');
         const infosOccu = infoOccu.data;
 
         setDataBar({
@@ -149,7 +149,7 @@ const Table = () => {
         let array = {
             'data': event.target.value
         }
-        const response = await axios.post('http://localhost/TESTE/content/buscar.php', JSON.stringify(array))
+        const response = await axios.post('http://localhost/content/buscar.php', JSON.stringify(array))
 
         try {
             if (response.data) {
