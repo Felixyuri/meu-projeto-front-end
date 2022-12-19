@@ -2,15 +2,25 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable react/jsx-key */
 /* eslint-disable no-unused-vars */
+
+// importando useState e useEffect (Hooks);
 import { useEffect, useState } from 'react';
+// importando moment para tratar as datas;
 import Moment from 'moment';
+// importando home de api.js (constante de retorno do endPoint);
 import { home } from '../Api';
+// importando axios biblioteca para realizar requisições;
 import axios from 'axios';
+// importando todas as utilidades do chart.js (biblioteca para uso dos gráficos);
 import 'chart.js/auto';
+// importando trackPromise (rastreador de promessas, faz com que mostre o loader enquanto a função está em espera);
 import { trackPromise } from 'react-promise-tracker';
+// importando constantes para a utilização dos graficos, através da biblioteca chart.js;
 import { Line, Pie, Bar } from 'react-chartjs-2';
 
+// essa constante faz com que todo o conteúdo do sistema seja tratado;
 const Table = () => {
+    // constantes que usão estados em componentes funcionais;
     const [dataGeral, setDataGeral] = useState([]);
     const [dataBar, setDataBar] = useState({
         labels: ['label 1', 'label 2', 'label 3', 'label 4'],
@@ -60,6 +70,7 @@ const Table = () => {
     const [tableCliente, setTableCliente] = useState([]);
     const [clienteKey, setClienteKey] = useState('cliente01');
 
+    // retorno do metodo axios.get para obter o resultado do endPoint e setar em alguns compenentes;
     const retornoapi = async () => {
         let responseInfos = await home.get('');
         let infosData = responseInfos.data;
@@ -72,6 +83,7 @@ const Table = () => {
         setDataGeral(returnInfos.data.geral);
     };
 
+    // busca as informações fazendo uma requisição para o back-end, que após receber os dados, seta eles em componentes;
     const retornoClass = async () => {
         trackPromise(retornoapi().then(async () => {
             const infoClass = await axios.get('http://localhost/content/class.php');
@@ -124,10 +136,12 @@ const Table = () => {
         }).catch((erro) => { alert(erro) }));
     }
 
+    // utilizado para realizar efeitos colaterais;
     useEffect(() => {
         retornoClass();
     }, []);
 
+    // utilizado para setar qual cliente devera aparece após a seleção;
     const handleChange = (event) => {
         let i = event.target.value;
         let list;
@@ -148,6 +162,7 @@ const Table = () => {
         }
     }
 
+    // busca no BD a data informada pelo usuario, fazendo então uma requisição com a data informada;
     const getData = async (event) => {
         setDataBusca(event.target.value);
         let array = {
@@ -191,6 +206,7 @@ const Table = () => {
         }
     }
 
+    // reorganiza a tabela após o usuario clickar em cima do titulo desejado para ordenação de dados;
     const organizeTable = (key, index) => {
         const arrayOfKeys = []
         const array = []
@@ -209,6 +225,7 @@ const Table = () => {
         setTableCliente(newObj);
     }
 
+    // retorna o array reorganizado do conteúdo escolhido para ser ordenado;
     function dynamicSort(property) {
         let sortOrder = 1;
         if (property[0] === "-") {
