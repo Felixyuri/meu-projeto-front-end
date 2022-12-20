@@ -7,8 +7,6 @@
 import { useEffect, useState } from 'react';
 // importando moment para tratar as datas;
 import Moment from 'moment';
-// importando home de api.js (constante de retorno do endPoint);
-import { home } from '../Api';
 // importando axios biblioteca para realizar requisições;
 import axios from 'axios';
 // importando todas as utilidades do chart.js (biblioteca para uso dos gráficos);
@@ -71,17 +69,15 @@ const System = () => {
 
     // retorno do metodo axios.get para obter o resultado do endPoint e setar em alguns compenentes;
     const retornoapi = async () => {
-        let responseInfos = await home.get('');
-        let infosData = responseInfos.data;
-        let dataSearch = Moment(infosData[0].geral.data).format('yyyy-MM-DD');
-
-        const returnInfos = await axios.post('http://localhost/content/connectionAPI.php', {
-            'content': JSON.stringify(infosData),
-            'function': 'home'
+        const responseInfos = await axios.post('http://localhost/content/connectionAPI.php', {
+            'content': '',
+            'function': 'getCurrentContent'
         });
 
-        setDataBusca(dataSearch);
-        setDataCliente(returnInfos.data.data.clientes);
+        let infosData = responseInfos.data.data;
+
+        setDataBusca(Moment(infosData.geral.data).format('yyyy-MM-DD'));
+        setDataCliente(infosData.clientes);
     };
 
     // busca as informações fazendo uma requisição para o back-end, que após receber os dados, seta eles em componentes;
