@@ -21,7 +21,6 @@ import { Line, Pie, Bar } from 'react-chartjs-2';
 // essa constante faz com que todo o conteúdo do sistema seja tratado;
 const System = () => {
     // constantes que usão estados em componentes funcionais;
-    const [dataGeral, setDataGeral] = useState([]);
     const [dataBar, setDataBar] = useState({
         labels: ['label 1', 'label 2', 'label 3', 'label 4'],
         datasets: [
@@ -83,7 +82,6 @@ const System = () => {
 
         setDataBusca(dataSearch);
         setDataCliente(returnInfos.data.data.clientes);
-        setDataGeral(returnInfos.data.data.geral);
     };
 
     // busca as informações fazendo uma requisição para o back-end, que após receber os dados, seta eles em componentes;

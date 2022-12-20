@@ -3,7 +3,6 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable no-unused-vars */
 import 'react';
-import './Cdns';
 import './styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Loader from './components/Loader';
