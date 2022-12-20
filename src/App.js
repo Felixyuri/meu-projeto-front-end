@@ -8,7 +8,7 @@ import './styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Loader from './components/Loader';
 import {usePromiseTracker} from 'react-promise-tracker';
-import Table from './components/Table';
+import System from './components/System';
 
 function App() {
   const { promiseInProgress } = usePromiseTracker();
@@ -17,7 +17,7 @@ function App() {
       {promiseInProgress && (
         <Loader/>
       )}
-      <Table />
+      <System />
     </div >
   );
 }

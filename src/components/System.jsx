@@ -19,7 +19,7 @@ import { trackPromise } from 'react-promise-tracker';
 import { Line, Pie, Bar } from 'react-chartjs-2';
 
 // essa constante faz com que todo o conteúdo do sistema seja tratado;
-const Table = () => {
+const System = () => {
     // constantes que usão estados em componentes funcionais;
     const [dataGeral, setDataGeral] = useState([]);
     const [dataBar, setDataBar] = useState({
@@ -76,24 +76,31 @@ const Table = () => {
         let infosData = responseInfos.data;
         let dataSearch = Moment(infosData[0].geral.data).format('yyyy-MM-DD');
 
-        const returnInfos = await axios.post('http://localhost/content/home.php', JSON.stringify(infosData));
+        const returnInfos = await axios.post('http://localhost/content/connectionAPI.php', {
+            'content': JSON.stringify(infosData),
+            'function': 'home'
+        });
 
         setDataBusca(dataSearch);
-        setDataCliente(returnInfos.data.clientes);
-        setDataGeral(returnInfos.data.geral);
+        setDataCliente(returnInfos.data.data.clientes);
+        setDataGeral(returnInfos.data.data.geral);
     };
 
     // busca as informações fazendo uma requisição para o back-end, que após receber os dados, seta eles em componentes;
     const retornoClass = async () => {
         trackPromise(retornoapi().then(async () => {
-            const infoClass = await axios.get('http://localhost/content/class.php');
-            const infosclass = infoClass.data;
+            const infoPie = await axios.post('http://localhost/content/connectionAPI.php', {
+                'content': '',
+                'function': 'getPie'
+            });
+
+            const infosPie = infoPie.data.data;
 
             setDataPie({
                 labels: ['Falha operadora', 'Telefone incorreto', 'Não atendida', 'Atendimento maquina', 'Atendimento humano', 'Abandono pre fila', 'Abandono fila', 'Atendimento pa'],
                 datasets: [
                     {
-                        data: [infosclass['chamadas_falha_operadora'], infosclass['chamadas_telefone_incorreto'], infosclass['chamadas_nao_atendida'], infosclass['chamadas_atendimento_maquina'], infosclass['chamadas_atendimento_humano'], infosclass['chamadas_abandono_pre_fila'], infosclass['chamadas_abandono_fila'], infosclass['chamadas_atendimento_pa']],
+                        data: [infosPie['chamadas_falha_operadora'], infosPie['chamadas_telefone_incorreto'], infosPie['chamadas_nao_atendida'], infosPie['chamadas_atendimento_maquina'], infosPie['chamadas_atendimento_humano'], infosPie['chamadas_abandono_pre_fila'], infosPie['chamadas_abandono_fila'], infosPie['chamadas_atendimento_pa']],
                         backgroundColor: ['#ff8d005e', '#cb7e7e', '#ff000059', '#9d8fb0', '#b2cc7d', '#2d1b3e9f', '#63d77761', '#591de5'],
                         borderColor: ['#ff8d005e', '#cb7e7e', '#ff000059', '#9d8fb0', '#b2cc7d', '#2d1b3e9f', '#63d77761', '#591de5'],
                         borderWidth: 1
@@ -101,10 +108,14 @@ const Table = () => {
                 ]
             });
 
-            const infoDay = await axios.get('http://localhost/content/days.php');
-            const infosDay = infoDay.data;
-            let currentDays = infosDay.map((infoDay) => Moment(infoDay.data).format('DD/MM/yyyy'));
-            let currentContent = infosDay.map((infoDay) => infoDay.chamadas_total);
+            const infoLine = await axios.post('http://localhost/content/connectionAPI.php', {
+                'content': '',
+                'function': 'getLine'
+            });
+            const infosLine = infoLine.data.data;
+
+            let currentDays = infosLine.map((infoDate) => Moment(infoDate.data).format('DD/MM/yyyy'));
+            let currentContent = infosLine.map((infoLine) => infoLine.chamadas_total);
 
             setDataLine({
                 labels: [...currentDays],
@@ -119,14 +130,17 @@ const Table = () => {
                 ]
             });
 
-            const infoOccu = await axios.get('http://localhost/content/occu.php');
-            const infosOccu = infoOccu.data;
+            const infoBar = await axios.post('http://localhost/content/connectionAPI.php', {
+                'content': '',
+                'function': 'getBar'
+            });
+            const infosBar = infoBar.data.data;
 
             setDataBar({
                 labels: ['Sem contato', 'Com contato', 'Abordagem', 'Fechamento'],
                 datasets: [
                     {
-                        data: [infosOccu['ocorrencias_sem_contato'], infosOccu['ocorrencias_com_contato'], infosOccu['ocorrencias_abordagem'], infosOccu['ocorrencias_fechamento']],
+                        data: [infosBar['ocorrencias_sem_contato'], infosBar['ocorrencias_com_contato'], infosBar['ocorrencias_abordagem'], infosBar['ocorrencias_fechamento']],
                         backgroundColor: ['#ff8d005e', '#63d77761', '#ff000059', '#2d1b3e9f', '#ff000059', '#2d1b3e9f', '#63d77761', '#2d1b3e9f'],
                         borderColor: ['#ff6e07fa', '#057628', '#951717', '#2d1b3e', '#951717', '#2d1b3e', '#057628', '#2d1b3e'],
                         borderWidth: 1
@@ -168,15 +182,19 @@ const Table = () => {
         let array = {
             'data': event.target.value
         }
-        const response = await trackPromise(axios.post('http://localhost/content/buscar.php', JSON.stringify(array)))
+
+        const response = await trackPromise(axios.post('http://localhost/content/connectionAPI.php', {
+            'content': JSON.stringify(array),
+            'function': 'getData'
+        }))
 
         try {
-            if (response.data) {
+            if (response.data.data) {
                 setDataPie({
                     labels: ['Falha operadora', 'Telefone incorreto', 'Não atendida', 'Atendimento maquina', 'Atendimento humano', 'Abandono pre fila', 'Abandono fila', 'Atendimento pa'],
                     datasets: [
                         {
-                            data: [response.data.geral['chamadas_falha_operadora'], response.data.geral['chamadas_telefone_incorreto'], response.data.geral['chamadas_nao_atendida'], response.data.geral['chamadas_atendimento_maquina'], response.data.geral['chamadas_atendimento_humano'], response.data.geral['chamadas_abandono_pre_fila'], response.data.geral['chamadas_abandono_fila'], response.data.geral['chamadas_atendimento_pa']],
+                            data: [response.data.data.geral['chamadas_falha_operadora'], response.data.data.geral['chamadas_telefone_incorreto'], response.data.data.geral['chamadas_nao_atendida'], response.data.data.geral['chamadas_atendimento_maquina'], response.data.data.geral['chamadas_atendimento_humano'], response.data.data.geral['chamadas_abandono_pre_fila'], response.data.data.geral['chamadas_abandono_fila'], response.data.data.geral['chamadas_atendimento_pa']],
                             backgroundColor: ['#ff8d005e', '#cb7e7e', '#ff000059', '#9d8fb0', '#b2cc7d', '#2d1b3e9f', '#63d77761', '#591de5'],
                             borderColor: ['#ff8d005e', '#cb7e7e', '#ff000059', '#9d8fb0', '#b2cc7d', '#2d1b3e9f', '#63d77761', '#591de5'],
                             borderWidth: 1
@@ -188,7 +206,7 @@ const Table = () => {
                     labels: ['Sem contato', 'Com contato', 'Abordagem', 'Fechamento'],
                     datasets: [
                         {
-                            data: [response.data.geral['ocorrencias_sem_contato'], response.data.geral['ocorrencias_com_contato'], response.data.geral['ocorrencias_abordagem'], response.data.geral['ocorrencias_fechamento']],
+                            data: [response.data.data.geral['ocorrencias_sem_contato'], response.data.data.geral['ocorrencias_com_contato'], response.data.data.geral['ocorrencias_abordagem'], response.data.data.geral['ocorrencias_fechamento']],
                             backgroundColor: ['#ff8d005e', '#63d77761', '#ff000059', '#2d1b3e9f', '#ff000059', '#2d1b3e9f', '#63d77761', '#2d1b3e9f'],
                             borderColor: ['#ff6e07fa', '#057628', '#951717', '#2d1b3e', '#951717', '#2d1b3e', '#057628', '#2d1b3e'],
                             borderWidth: 1
@@ -196,7 +214,7 @@ const Table = () => {
                     ]
                 });
 
-                setDataCliente(response.data.clientes);
+                setDataCliente(response.data.data.clientes);
                 setTableCliente('');
             } else {
                 alert('Sem dados para a data informada!');
@@ -242,9 +260,9 @@ const Table = () => {
     return (
         <>
             <div className="row mb-3">
-                <div className="col-3">
+                <div className="col-sm-12 col-md-3">
                     <div className="form-group">
-                        <select name="id_cliente" className="w-100" id="id_cliente" onChange={handleChange} >
+                        <select className="w-100" onChange={handleChange} >
                             <option defaultValue value=''>Todos</option>
                             {Object.values(dataCliente).map((key, index) => (
                                 <option key={index} value={key.cliente}>{key.cliente}</option>
@@ -321,4 +339,4 @@ const Table = () => {
     )
 }
 
-export default Table;
+export default System;
